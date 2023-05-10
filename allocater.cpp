@@ -43,14 +43,21 @@ void printBlock(vector<line> block)
     //     left << setw(3) << "sr" << " | " <<
     //     left << setw(3) << "sr" << " |" << endl;
 
-    for(int i = 0; i < blockSize; i++)
+    /*for(int i = 0; i < blockSize; i++)
         {
                 cout << "|" << left << setw(5) << i << "|" << //Index
                 left << setw(6) << get<0>(block.at(i)) << " |" << //Opcode
                 "| " << left << setw(3) << returnOpAsString(get<1>(block.at(i))) << " | " << //op1
                 left << setw(3) << returnOpAsString(get<2>(block.at(i))) << " | " << //op2
                 left << setw(3) << returnOpAsString(get<3>(block.at(i))) << " |" << endl; //dest
-        }
+        }*/
+    for (const auto& t : block) {
+        cout << get<0>(t) << ":\n"
+             << "  " << get<0>(get<1>(t)) << ": " << get<1>(get<1>(t)) << ", " << get<2>(get<1>(t)) << ", " << get<3>(get<1>(t)) << "\n"
+             << "  " << get<0>(get<2>(t)) << ": " << get<1>(get<2>(t)) << ", " << get<2>(get<2>(t)) << ", " << get<3>(get<2>(t)) << "\n"
+             << "  " << get<0>(get<3>(t)) << ": " << get<1>(get<3>(t)) << ", " << get<2>(get<3>(t)) << ", " << get<3>(get<3>(t)) << "\n";
+    }
+
 }
 
 void fillSRVRandLU(vector<line> block)
@@ -68,8 +75,16 @@ void fillSRVRandLU(vector<line> block)
     for(unsigned int i = 0; i < block.size(); i++)
         {
             newSR = get<0>(get<1>(block[i]));
+            bool found = false;
+            size_t p = 0;
             //unique_checker = find(SRtoVR.begin(), SRtoVR.end(), newSR);
-            if(newSR != "-" && std::find(SRtoVR.begin(), SRtoVR.end(), newSR) != SRtoVR.end())
+            while(p < SRtoVR.size() && !found) {
+                if (std::get<0>(SRtoVR[p]) == newSR) {
+                    found = true;
+                }
+                p++;
+            }
+            if(newSR != "-" && found == true)
             {
                 SRtoVR.resize(maxRegNum);
                 LastUse.resize(maxRegNum);
@@ -77,10 +92,18 @@ void fillSRVRandLU(vector<line> block)
                 get<0>(LastUse[maxRegNum]) = newSR;
                 maxRegNum++;
             }// checks if sr is unique of op1 and if so creates an SRtoVR tuple for it.
+            p = 0;
+            found = false;
             
             newSR = get<0>(get<2>(block[i]));
             //unique_checker = find(SRtoVR.begin(), SRtoVR.end(), newSR);
-            if(newSR != "-" && std::find(SRtoVR.begin(), SRtoVR.end(), newSR) != SRtoVR.end())
+            while(p < SRtoVR.size() && !found) {
+                if (std::get<0>(SRtoVR[p]) == newSR) {
+                    found = true;
+                }
+                p++;
+            }
+            if(newSR != "-" && found == true)
             {
                 SRtoVR.resize(maxRegNum);
                 LastUse.resize(maxRegNum);
@@ -88,10 +111,18 @@ void fillSRVRandLU(vector<line> block)
                 get<0>(LastUse[maxRegNum]) = newSR;
                 maxRegNum++;
             }// checks if sr is unique of op2 and if so creates an SRtoVR tuple for it.
+            p = 0;
+            found = false;
             
             newSR = get<0>(get<3>(block[i]));
             //unique_checker = find(SRtoVR.begin(), SRtoVR.end(), newSR);
-            if(newSR != "-" && std::find(SRtoVR.begin(), SRtoVR.end(), newSR) != SRtoVR.end())
+            while(p < SRtoVR.size() && !found) {
+                if (std::get<0>(SRtoVR[p]) == newSR) {
+                    found = true;
+                }
+                p++;
+            }
+            if(newSR != "-" && found == true)
             {
                 SRtoVR.resize(maxRegNum);
                 LastUse.resize(maxRegNum);
@@ -99,6 +130,8 @@ void fillSRVRandLU(vector<line> block)
                 get<0>(LastUse[maxRegNum]) = newSR;
                 maxRegNum++;
             }// checks if sr is unique of op3 and if so creates an SRtoVR tuple for it.
+            p = 0;
+            found = false;
             
             
             /*!SRtoVR.contains(get<0>(get<1>(block.at(i))))*/ 
@@ -127,26 +160,55 @@ void ComputeNextUse(vector<line> block)
     for(int i = block.size() - 1; i > 0; i--)
     {
         int posOfSR;
-        vector<tuple<string,string>>::iterator findSR;
-        findSR = find(SRtoVR.begin(), SRtoVR.end(), get<0>(get<1>(block[i])));
-        posOfSR = findSR - SRtoVR.begin();
+        string blockSR;
+        blockSR = get<0>(get<1>(block[i]));
+        bool found = false;
+        size_t p = 0;
+        //vector<tuple<string,string>>::iterator findSR;
+        while(p < SRtoVR.size() && !found) {
+                if (std::get<0>(SRtoVR[p]) == blockSR) {
+                    found = true;
+                    posOfSR = static_cast<int>(p);
+                }
+                p++;
+            }
+
+
+        
+        //findSR = find(SRtoVR.begin(), SRtoVR.end(), get<0>(get<1>(block[i])));
+        //posOfSR = findSR - SRtoVR.begin();
         UpdateCNU(get<3>(block[i]), i);
         get<1>(SRtoVR[posOfSR]) = "invalid";
         get<1>(LastUse[posOfSR]) = -1;
         UpdateCNU(get<1>(block[i]), i);
         UpdateCNU(get<2>(block[i]), i);
     }
+    printBlock(block);
 }
 
 void UpdateCNU(operand op, int index)
 {
-    if (get<1>(SRtoVR[find(SRtoVR.begin(), SRtoVR.end(), get<0>(op)) - SRtoVR.begin() ]) == "invalid") //SRtoVR has an error bc it is trying to get an index from a string
+    
+    int posOfSR;
+    string opSR;
+    opSR = get<0>(op);
+    bool found = false;
+    size_t p = 0;
+
+    while(p < SRtoVR.size() && !found) {
+                if (std::get<0>(SRtoVR[p]) == opSR) {
+                    found = true;
+                    posOfSR = static_cast<int>(p);
+                }
+                p++;
+            }
+    
+    if (get<1>(SRtoVR[posOfSR]) == "invalid") //SRtoVR has an error bc it is trying to get an index from a string
     {
-        get<1>(SRtoVR[find(SRtoVR.begin(), SRtoVR.end(), get<0>(op)) - SRtoVR.begin() ]) = VRName++;
+        get<1>(SRtoVR[posOfSR]) = VRName++;
     }
-    get<1>(op) = stoi(get<1>(SRtoVR[find(SRtoVR.begin(), SRtoVR.end(), get<0>(op)) - SRtoVR.begin() ])); //sets VR
-    get<3>(op) = get<1>(LastUse[find(SRtoVR.begin(), SRtoVR.end(), get<0>(op)) - SRtoVR.begin() ]); //sets NU
-    get<1>(LastUse[find(SRtoVR.begin(), SRtoVR.end(), get<0>(op)) - SRtoVR.begin()]) = index;
+    get<1>(op) = stoi(get<1>(SRtoVR[posOfSR])); //sets VR
+    get<3>(op) = get<1>(LastUse[posOfSR]); //sets NU
+    get<1>(LastUse[posOfSR]) = index;
 
 }
-
