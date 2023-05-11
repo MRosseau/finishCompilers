@@ -112,7 +112,7 @@ Line toLine(string opcodeVal, Operand op1Val, Operand op2Val, Operand op3Val) {
     return newOp;
 }
 
-vector<Line> &populateBlock(vector<tuple<string, string, string, string>> table)
+vector<Line> populateBlock(vector<tuple<string, string, string, string>> &table)
 {
     vector<Line> block;
     block.resize(table.size());
@@ -150,7 +150,7 @@ vector<Line> &populateBlock(vector<tuple<string, string, string, string>> table)
         else
         {
             op1 = toOperand(stoi(op1SR));
-            op3.isReg = true;
+            op3.isReg = false;
         }
 
         if(op2SR == "-")
@@ -166,7 +166,7 @@ vector<Line> &populateBlock(vector<tuple<string, string, string, string>> table)
         else
         {
             op2 = toOperand(stoi(op2SR));
-            op2.isReg = true;
+            op2.isReg = false;
         }
 
         if(op3SR == "-")
@@ -182,7 +182,7 @@ vector<Line> &populateBlock(vector<tuple<string, string, string, string>> table)
         else
         {
             op3 = toOperand(stoi(op3SR));
-            op3.isReg = true;
+            op3.isReg = false;
         }
 
         //cout << "op1SR is " << op1SR << " op1 isReg? " << op1.isReg << " op2SR is " << op2SR << " op2 isReg? " << op2.isReg << " op3SR is " << op3SR << " op3 isReg? " << op3.isReg <<endl;
@@ -206,7 +206,7 @@ void parser(bool kFlag)
     {
         update_tokes();
         t0();
-        vector<Line> &updatedTable = populateBlock(table);
+        vector<Line> updatedTable = populateBlock(table);
         naiveAllocator(updatedTable, true, 3);
     }
    

@@ -101,7 +101,7 @@ void s17 (char i);
 void s18 (); //Scan comments
 
 // parser.cpp
-vector<Line> &populateBlock(vector<tuple<string, string, string, string>> table); //added to convert table to block
+vector<Line> populateBlock(vector<tuple<string, string, string, string>> &table); //added to convert table to block
 void createTableRow();
 void update_tokes();
 void printTable();
@@ -120,6 +120,6 @@ void t5();
 void naiveAllocator(vector<Line> &block, bool kFlag, int kNum);
 void lastUse(vector<Line> &block, int maxReg, vector<int> &LU);
 void update(Operand &op, int index, vector<int> &LU);
-void convertPR(Operand op, vector<int> VRtoPR, stack<int> PRList, vector<Line> temp, int index);
-void updateLiveRange(vector<Line> block, vector<int> LRStart, vector<bool> checkVR, int currentVR, int i);
+void convertPR(Operand &op, vector<int> &VRtoPR, stack<int> &PRList, vector<Line> &temp, int index);
+void updateLiveRange(vector<Line> &block, vector<int> &LRStart, vector<bool> &checkVR, int currentVR, int i);
 

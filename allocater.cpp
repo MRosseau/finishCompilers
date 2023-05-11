@@ -79,17 +79,17 @@ void lastUse(vector<Line> &block, int maxReg, vector<int> &LU) { //take out SRto
         //operand op1 = make_tuple(get<0>(get<1>(block[i])), get<1>(get<1>(block[i])), get<2>(get<1>(block[i])), get<3>(get<1>(block[i])));
         //operand op2 = make_tuple(get<0>(get<2>(block[i])), get<1>(get<2>(block[i])), get<2>(get<2>(block[i])), get<3>(get<2>(block[i])));
 
-        cout << "attempt update on " << block[i].op3.SR << endl;
+        cout << "attempt update on op3 " << block[i].op3.SR << " isReg? " << block[i].op3.isReg << endl;
         update(block[i].op3, i, LU); //block[i].dest to get<3>(block[i]) //get<3>(block[i]) to op
-        cout << "updated op3" << endl; 
+        cout << "finished op3" << endl; 
         SRtoVR[block[i].op3.SR] = -1; //block[i].dest.SR to get<0>(get<3>(block[i]))
-        cout << "set SR3 to invalid" << endl; 
         LU[block[i].op3.SR] = -1; //block[i].dest.SR to get<0>(get<3>(block[i]))
-        cout << "set LU to invalid" << endl; 
+        cout << "attempt update on op1 " << block[i].op1.SR << " isReg? " << block[i].op1.isReg << endl;
         update(block[i].op1, i, LU); //block[i].source1 to get<1>(block[i])
-        cout << "updated op1" << endl;
+        cout << "finished op1" << endl;
+        cout << "attempt update on op2 " << block[i].op2.SR << " isReg? " << block[i].op2.isReg << endl;
         update(block[i].op2, i, LU); //block[i].source2 to get<2>(block[i])
-        cout << "updated op2" << endl;
+        cout << "finished op2\n" << endl;
         //cout << SRtoVR[i] << endl;
     }
 
@@ -98,8 +98,8 @@ void lastUse(vector<Line> &block, int maxReg, vector<int> &LU) { //take out SRto
 
 
 void update(Operand &op, int index, vector<int> &LU) { //take out SRtoVR and VRName as a Variable
-    cout << "start update op SR " << op.SR << endl;
     if(op.isReg) { //op.SR != -1 to op.isReg, if-block extended to cover the whole function
+        cout << "start update op SR " << op.SR << endl;
         if(SRtoVR[op.SR] == -1) {
             SRtoVR[op.SR] = VRName++; //op.SR to get<0>(op)
         }
