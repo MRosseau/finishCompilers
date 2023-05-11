@@ -48,11 +48,11 @@ enum Operation {
 };
 
 struct Operand {
-    int SR = -1;
-    int VR = -1;
-    int NU = -1;
-    int PR = -1;
-    bool isReg = false;
+    int SR;
+    int VR;
+    int NU;
+    int PR;
+    bool isReg;
 };
 
 struct Line {
@@ -118,8 +118,8 @@ void t5();
 //typedef tuple<string, int, int, int> operand; //this tracks the sr,vr,pr,and nu of an operand
 //typedef tuple<string,operand,operand,operand> line; //constructs a single line of the block which holds OPCODE, OP1, OP2, and OP3
 void naiveAllocator(vector<Line> block, bool kFlag, int kNum);
-void lastUse(vector<Line> block, int maxReg, vector<int> SRtoVR, vector<int> LU, int maxVR);
-void update(Operand op, int index, vector<int> SRtoVR, vector<int> LU, int VRName);
+void lastUse(vector<Line> block, int maxReg, vector<int> LU);
+void update(Operand op, int index, vector<int> LU);
 void convertPR(Operand op, vector<int> VRtoPR, stack<int> PRList, vector<Line> temp, int index);
 void updateLiveRange(vector<Line> block, vector<int> LRStart, vector<bool> checkVR, int currentVR, int i);
 
