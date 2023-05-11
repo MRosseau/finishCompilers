@@ -13,18 +13,7 @@ void naiveAllocator(vector<Line> block, bool kFlag, int kNum) {
     vector<int> regInt;
     stack<int> PRList;
     int maxVR;
-    int maxLive;
-    int reserve;
     int maxReg = 0;
-    int x;
-
-
-    /*get # of registers
-    for(int i = 0; i < reg.size(); i++) {
-        if(reg[i] > maxReg) {
-            maxReg = reg[i];
-        }
-    }*/
 
     //get maxReg
     for(Line l : block) {
@@ -59,10 +48,6 @@ void lastUse(vector<Line> block, int maxReg, vector<int> SRtoVR, vector<int> LU,
         LU[i] = -1;
     }
     for(int i = block.size() - 1; i > 0; i--) {
-        //operand op3 = make_tuple(get<0>(get<3>(block[i])), get<1>(get<3>(block[i])), get<2>(get<3>(block[i])), get<3>(get<3>(block[i])));
-        //operand op1 = make_tuple(get<0>(get<1>(block[i])), get<1>(get<1>(block[i])), get<2>(get<1>(block[i])), get<3>(get<1>(block[i])));
-        //operand op2 = make_tuple(get<0>(get<2>(block[i])), get<1>(get<2>(block[i])), get<2>(get<2>(block[i])), get<3>(get<2>(block[i])));
-
         update(block[i].op3, i, SRtoVR, LU, VRName); //block[i].dest to get<3>(block[i]) //get<3>(block[i]) to op 
         SRtoVR[block[i].op3.SR] = -1; //block[i].dest.SR to get<0>(get<3>(block[i]))
         LU[block[i].op3.SR] = -1; //block[i].dest.SR to get<0>(get<3>(block[i]))
