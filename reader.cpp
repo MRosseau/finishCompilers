@@ -10,18 +10,22 @@ int main(int argc, char** argv)
         //int opt; unused variable
         bool tFlag = false;
         bool pFlag = false;
-        const struct option longopts[] = 
+        bool kFlag = false;
+        const struct option longopts[] =
         {
                 {"help", no_argument, 0, 'h'},
                 {"tokens", no_argument, 0, 't'},
-                {"print", no_argument, 0, 'p'}
+                {"print", no_argument, 0, 'p'},
+                {"allocator", no_argument, 0, 'k'} //posibly need to add PR limit
         };
+
 
         int index;
         int iarg = 0;
         while(iarg != -1)
         {
-                iarg = getopt_long(argc, argv, "htp", longopts, &index);
+                iarg = getopt_long(argc, argv, "htpk", longopts, &index);
+
 
                 switch(iarg)
                 {
@@ -39,6 +43,10 @@ int main(int argc, char** argv)
                                 cout << "pretty printing" << endl;
                                 pFlag = true;
                                 break;
+                        case 'k':
+                                cout << "printing allocator" << endl;
+                                kFlag = true;
+                                break;
                         case '?':
                                 cerr << "Invalid flag, type -h for help\n";
                                 exit(-1);
@@ -47,31 +55,36 @@ int main(int argc, char** argv)
                                 break;
                 }
         }
-        
+       
         //INPUT HANDLING
         inFile = fopen(argv[optind], "r");
         if(inFile == nullptr) return EXIT_FAILURE;
         //char c; unused variable
         //cout << "Calling scanToken" << endl;
-        scanToken(tFlag, pFlag);
+        scanToken(tFlag, pFlag, kFlag);
         //cout << "Ending scanToken" << endl;
+
 
         fclose(inFile);
         return EXIT_SUCCESS;
 }
 
+
 //FLAG FUNCTIONS
 void PrintHelp()
 {
-        cout << "-h:\tPrints a helpful message\n" << 
+        cout << "-h:\tPrints a helpful message\n" <<
                 "-t:\tPrints a list of tokens\n" <<
+                "-h:\tPrints a filled out block\n" <<
                 "-p:\tPrints ILOC code\n";
 }
+
 
 void PrintTokens() //Deprecated
 {
         cout << "-t option\n";
 }
+
 
 void ScanErr(char c)
 {

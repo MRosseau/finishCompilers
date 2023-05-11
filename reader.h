@@ -9,13 +9,14 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <stack>
 #include <tuple>
 #include <iomanip>
 #include <algorithm>
 #include <iterator>
 using namespace std;
 
-typedef tuple<string, int, int, int> operand; //this tracks the sr,vr,pr,and nu of an operand
+typedef tuple<int, int, int, int> operand; //this tracks the sr,vr,pr,and nu of an operand //change sr from string to int
 typedef tuple<string,operand,operand,operand> line; //constructs a single line of the block which holds OPCODE, OP1, OP2, and OP3
 
 enum Token {
@@ -46,10 +47,30 @@ enum Operation {
         outputOp
 };
 
+struct Operand {
+    int SR = -1;
+    int VR = -1;
+    int NU = -1;
+    int PR = -1;
+    bool isReg = false;
+};
+
+struct Line {
+    int index;
+    string opcode;
+    Operand op1;
+    Operand op2;
+    Operand op3;
+};
+
+//Operand toOperand(int val);
+
+//Line toLine(string opcodeVal, struct Operand op1Val, struct Operand op2Val, struct Operand op3Val);
+
 void PrintHelp();
 void PrintTokens();
 
-void scanToken(bool print, bool pFlag);
+void scanToken(bool print, bool pFlag, bool kFlag);
 void printToken();
 
 void ScanErr(char c);
@@ -80,11 +101,12 @@ void s17 (char i);
 void s18 (); //Scan comments
 
 // parser.cpp
+vector<Line> populateBlock(vector<tuple<string, string, string, string>> table); //added to convert table to block
 void createTableRow();
 void update_tokes();
 void printTable();
 void printILOC();
-void parser();
+void parser(bool kFlag);
 void t0();
 void t1();
 void t2();
@@ -92,12 +114,12 @@ void t3();
 void t4();
 void t5();
 
-//allocater.cpptypedef tuple<string, int, int, int> operand; //this tracks the sr,vr,pr,and nu of an operand
-typedef tuple<string,operand,operand,operand> line; //constructs a single line of the block which holds OPCODE, OP1, OP2, and OP3
-void populateBlock();
-string returnOpAsString(operand op);
-void printBlock(vector<line> block);
-void fillSRVRandLU(vector<line> block);
-void ComputeNextUse(vector<line> block);
-void UpdateCNU(operand op, int index);
+//allocater.cpp
+//typedef tuple<string, int, int, int> operand; //this tracks the sr,vr,pr,and nu of an operand
+//typedef tuple<string,operand,operand,operand> line; //constructs a single line of the block which holds OPCODE, OP1, OP2, and OP3
+void naiveAllocator(vector<Line> block, bool kFlag, int kNum);
+void lastUse(vector<Line> block, int maxReg, vector<int> SRtoVR, vector<int> LU, int maxVR);
+void update(Operand op, int index, vector<int> SRtoVR, vector<int> LU, int VRName);
+void convertPR(Operand op, vector<int> VRtoPR, stack<int> PRList, vector<Line> temp, int index);
+void updateLiveRange(vector<Line> block, vector<int> LRStart, vector<bool> checkVR, int currentVR, int i);
 

@@ -1,214 +1,86 @@
+#include <iostream>
+#include <fstream>
 #include "reader.h"
 
-vector <tuple<string, string>> SRtoVR;//(tuple<SR name, VR name>)
-vector <tuple<string, int>> LastUse;//(tuple<SR name, index of LU>)
-//typedef tuple<string, int, int, int> operand; //this tracks the sr,vr,pr,and nu of an operand
-//typedef tuple<string,operand,operand,operand> line; //constructs a single line of the block which holds OPCODE, OP1, OP2, and OP3
-vector<line> block;
-extern vector< tuple<string, string, string, string> > table; //Vector of quadruple containing strings for opcode, op1, op2, and dest
 
-int VRName = 0;
-
-void populateBlock()
-{
-    for (unsigned int i = 0; i < table.size(); i++)
-    {
-        line newLine = make_tuple(get<0>(table.at(i)), 
-                                  make_tuple(get<1>(table.at(i)), NULL, NULL , NULL), 
-                                  make_tuple(get<2>(table.at(i)), NULL, NULL , NULL), 
-                                  make_tuple(get<3>(table.at(i)), NULL, NULL , NULL));
-        block.resize(table.size());
-        block[i] = newLine;
-    }
-}
-string returnOpAsString(operand op)
-{
-    string opString = "sr: " + get<0>(op) + 
-                      " vr: " + to_string(get<1>(op)) +
-                      " pr: " + to_string(get<2>(op)) +
-                      " nu: " + to_string(get<3>(op));
-    return opString;
-}
-void printBlock(vector<line> block)
-{
-    int blockSize = block.size();
-    // cout << "|" << left << setw(5) << "index" << "|" <<
-    //     left << setw(6) << "opcode" << " |" <<
-    //     "| " << left << setw(3) << "op1" << " | " <<
-    //     left << setw(3) << "op2" << " |" <<
-    //     left << setw(3) << "dest" << " |" << endl;
-    // cout << "|" << left << setw(5) << "" << "|" <<
-    //     left << setw(6) << "" << " |" <<
-    //     "| " << left << setw(3) << "sr" << " | " <<
-    //     left << setw(3) << "sr" << " | " <<
-    //     left << setw(3) << "sr" << " |" << endl;
-
-    /*for(int i = 0; i < blockSize; i++)
-        {
-                cout << "|" << left << setw(5) << i << "|" << //Index
-                left << setw(6) << get<0>(block.at(i)) << " |" << //Opcode
-                "| " << left << setw(3) << returnOpAsString(get<1>(block.at(i))) << " | " << //op1
-                left << setw(3) << returnOpAsString(get<2>(block.at(i))) << " | " << //op2
-                left << setw(3) << returnOpAsString(get<3>(block.at(i))) << " |" << endl; //dest
-        }*/
-    for (const auto& t : block) {
-        cout << get<0>(t) << ":\n"
-             << "  " << get<0>(get<1>(t)) << ": " << get<1>(get<1>(t)) << ", " << get<2>(get<1>(t)) << ", " << get<3>(get<1>(t)) << "\n"
-             << "  " << get<0>(get<2>(t)) << ": " << get<1>(get<2>(t)) << ", " << get<2>(get<2>(t)) << ", " << get<3>(get<2>(t)) << "\n"
-             << "  " << get<0>(get<3>(t)) << ": " << get<1>(get<3>(t)) << ", " << get<2>(get<3>(t)) << ", " << get<3>(get<3>(t)) << "\n";
-    }
-
-}
-
-void fillSRVRandLU(vector<line> block)
-{
-    int maxRegNum = 0;
-    string newSR;
-    //vector<tuple<string,string>>::iterator unique_checker;
-    //string unique_checker;
-    //if (std::find(v.begin(), v.end(), "abc") != v.end())
-
-    //find is having trouble with finding newSR bc it is a string and SRtoVR is a vec<tup<str,str>>. we will eith have to make a vector of just SR's to use find(),
-    // figure out how to get find() to either use pattern matching possilbly using wildcards, or only look at the first string in the tuple, or find an alternative to find().
+void naiveAllocator(vector<Line> block, bool kFlag, int kNum) {
+    vector<int> SRtoVR;
+    vector<int> LU;
+    vector<int> VRtoPR;
+    vector<int> LRStart;
+    vector<int> LREnd;
+    vector<bool> checkVR;
+    vector<int> regInt;
+    stack<int> PRList;
+    int maxVR;
+    int maxLive;
+    int reserve;
+    int maxReg = 0;
+    int x;
 
 
-    for(unsigned int i = 0; i < block.size(); i++)
-        {
-            newSR = get<0>(get<1>(block[i]));
-            bool found = false;
-            size_t p = 0;
-            //unique_checker = find(SRtoVR.begin(), SRtoVR.end(), newSR);
-            while(p < SRtoVR.size() && !found) {
-                if (std::get<0>(SRtoVR[p]) == newSR) {
-                    found = true;
-                }
-                p++;
-            }
-            if(newSR != "-" && found == true)
-            {
-                SRtoVR.resize(maxRegNum);
-                LastUse.resize(maxRegNum);
-                get<0>(SRtoVR[maxRegNum]) = newSR;
-                get<0>(LastUse[maxRegNum]) = newSR;
-                maxRegNum++;
-            }// checks if sr is unique of op1 and if so creates an SRtoVR tuple for it.
-            p = 0;
-            found = false;
-            
-            newSR = get<0>(get<2>(block[i]));
-            //unique_checker = find(SRtoVR.begin(), SRtoVR.end(), newSR);
-            while(p < SRtoVR.size() && !found) {
-                if (std::get<0>(SRtoVR[p]) == newSR) {
-                    found = true;
-                }
-                p++;
-            }
-            if(newSR != "-" && found == true)
-            {
-                SRtoVR.resize(maxRegNum);
-                LastUse.resize(maxRegNum);
-                get<0>(SRtoVR[maxRegNum]) = newSR;
-                get<0>(LastUse[maxRegNum]) = newSR;
-                maxRegNum++;
-            }// checks if sr is unique of op2 and if so creates an SRtoVR tuple for it.
-            p = 0;
-            found = false;
-            
-            newSR = get<0>(get<3>(block[i]));
-            //unique_checker = find(SRtoVR.begin(), SRtoVR.end(), newSR);
-            while(p < SRtoVR.size() && !found) {
-                if (std::get<0>(SRtoVR[p]) == newSR) {
-                    found = true;
-                }
-                p++;
-            }
-            if(newSR != "-" && found == true)
-            {
-                SRtoVR.resize(maxRegNum);
-                LastUse.resize(maxRegNum);
-                get<0>(SRtoVR[maxRegNum]) = newSR;
-                get<0>(LastUse[maxRegNum]) = newSR;
-                maxRegNum++;
-            }// checks if sr is unique of op3 and if so creates an SRtoVR tuple for it.
-            p = 0;
-            found = false;
-            
-            
-            /*!SRtoVR.contains(get<0>(get<1>(block.at(i))))*/ 
-                // cout << "|" << left << setw(5) << i << "|" << //Index
-                // left << setw(6) << get<0>(block.at(i)) << " |" << //Opcode
-                // "| " << left << setw(3) << returnOpAsString(get<1>(block.at(i))) << " | " << //op1
-                // left << setw(3) << returnOpAsString(get<2>(block.at(i))) << " | " << //op2
-                // left << setw(3) << returnOpAsString(get<3>(block.at(i))) << " |" << endl; //dest
-
-
+    /*get # of registers
+    for(int i = 0; i < reg.size(); i++) {
+        if(reg[i] > maxReg) {
+            maxReg = reg[i];
         }
+    }*/
+
+    //get maxReg
+    for(Line l : block) {
+        if(l.op1.isReg)
+        {
+            maxReg++;
+            regInt.push_back(l.op1.SR);
+        }
+        if(l.op2.isReg)
+        {
+            maxReg++;
+            regInt.push_back(l.op2.SR);            
+        }
+        if(l.op3.isReg)
+        {
+            maxReg++;
+            regInt.push_back(l.op3.SR);
+        }
+    }
+    cout << "maxReg: " << maxReg << endl;
+
+    lastUse(block, maxReg, SRtoVR, LU, maxVR);
+   
+}
+//VR allocation and LU
+void lastUse(vector<Line> block, int maxReg, vector<int> SRtoVR, vector<int> LU, int maxVR) {
+    int VRName = 0;
+
+
+    for(int i = 0; i < maxReg; i++) {
+        SRtoVR[i] = -1;
+        LU[i] = -1;
+    }
+    for(int i = block.size() - 1; i > 0; i--) {
+        //operand op3 = make_tuple(get<0>(get<3>(block[i])), get<1>(get<3>(block[i])), get<2>(get<3>(block[i])), get<3>(get<3>(block[i])));
+        //operand op1 = make_tuple(get<0>(get<1>(block[i])), get<1>(get<1>(block[i])), get<2>(get<1>(block[i])), get<3>(get<1>(block[i])));
+        //operand op2 = make_tuple(get<0>(get<2>(block[i])), get<1>(get<2>(block[i])), get<2>(get<2>(block[i])), get<3>(get<2>(block[i])));
+
+        update(block[i].op3, i, SRtoVR, LU, VRName); //block[i].dest to get<3>(block[i]) //get<3>(block[i]) to op 
+        SRtoVR[block[i].op3.SR] = -1; //block[i].dest.SR to get<0>(get<3>(block[i]))
+        LU[block[i].op3.SR] = -1; //block[i].dest.SR to get<0>(get<3>(block[i]))
+        update(block[i].op1, i, SRtoVR, LU, VRName); //block[i].source1 to get<1>(block[i])
+        update(block[i].op2, i, SRtoVR, LU, VRName); //block[i].source2 to get<2>(block[i])
+        cout << SRtoVR[i] << endl;
+    }
+    maxVR = VRName;
 }
 
-void ComputeNextUse(vector<line> block)
-{
-    
-    fillSRVRandLU(block);
-    int maxRegNum = LastUse.size();
-    for(int i = 0;i < maxRegNum; i++)
-    {
-        get<1>(SRtoVR[i]) = "invalid";
-        get<1>(LastUse[i]) = -1;
+
+void update(Operand op, int index, vector<int> SRtoVR, vector<int> LU, int VRName) {
+    if(SRtoVR[op.SR] == -1) { //op.SR to get<0>(op)
+        SRtoVR[op.SR] = VRName++; //op.SR to get<0>(op)
     }
-    //printBlock(block);
-
-    for(int i = block.size() - 1; i > 0; i--)
-    {
-        int posOfSR;
-        string blockSR;
-        blockSR = get<0>(get<1>(block[i]));
-        bool found = false;
-        size_t p = 0;
-        //vector<tuple<string,string>>::iterator findSR;
-        while(p < SRtoVR.size() && !found) {
-                if (std::get<0>(SRtoVR[p]) == blockSR) {
-                    found = true;
-                    posOfSR = static_cast<int>(p);
-                }
-                p++;
-            }
-
-
-        
-        //findSR = find(SRtoVR.begin(), SRtoVR.end(), get<0>(get<1>(block[i])));
-        //posOfSR = findSR - SRtoVR.begin();
-        UpdateCNU(get<3>(block[i]), i);
-        get<1>(SRtoVR[posOfSR]) = "invalid";
-        get<1>(LastUse[posOfSR]) = -1;
-        UpdateCNU(get<1>(block[i]), i);
-        UpdateCNU(get<2>(block[i]), i);
-    }
-    printBlock(block);
+    op.VR = SRtoVR[op.SR]; //op.VR to get<1>(op) //op.SR to get<0>(op)
+    op.NU = LU[op.SR]; //op.NU to get<3>(op) //op.SR to get<0>(op)
+    LU[op.SR] = index; //op.SR to get<0>(op)
 }
 
-void UpdateCNU(operand op, int index)
-{
-    
-    int posOfSR;
-    string opSR;
-    opSR = get<0>(op);
-    bool found = false;
-    size_t p = 0;
 
-    while(p < SRtoVR.size() && !found) {
-                if (std::get<0>(SRtoVR[p]) == opSR) {
-                    found = true;
-                    posOfSR = static_cast<int>(p);
-                }
-                p++;
-            }
-    
-    if (get<1>(SRtoVR[posOfSR]) == "invalid") //SRtoVR has an error bc it is trying to get an index from a string
-    {
-        get<1>(SRtoVR[posOfSR]) = VRName++;
-    }
-    get<1>(op) = stoi(get<1>(SRtoVR[posOfSR])); //sets VR
-    get<3>(op) = get<1>(LastUse[posOfSR]); //sets NU
-    get<1>(LastUse[posOfSR]) = index;
-
-}

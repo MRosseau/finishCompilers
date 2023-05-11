@@ -97,14 +97,121 @@ void printILOC()
     }
 }
 
-void parser()
-{   
-    
-    update_tokes();
-    t0();
-    printTable();
-    
+Operand toOperand(int val) {
+    Operand newOp;
+    newOp.SR = val;
+    return newOp;
 }
+
+Line toLine(string opcodeVal, Operand op1Val, Operand op2Val, Operand op3Val) {
+    Line newOp;
+    newOp.opcode = opcodeVal;
+    newOp.op1 = op1Val;
+    newOp.op2 = op2Val;
+    newOp.op3 = op3Val;
+    return newOp;
+}
+
+vector<Line> populateBlock(vector<tuple<string, string, string, string>> table)
+{
+    vector<Line> block;
+    block.resize(table.size());
+   /*for (unsigned int i = 0; i < table.size(); i++)
+   {
+        operand op1 = make_tuple(stoi(get<1>(table.at(i))), NULL, NULL , NULL);
+        operand op2 = make_tuple(stoi(get<2>(table.at(i))), NULL, NULL , NULL);
+        operand op3 = make_tuple(stoi(get<3>(table.at(i))), NULL, NULL , NULL);
+       line newLine = make_tuple(get<0>(table.at(i)), op1, op2, op3);
+       block.resize(table.size());
+       block[i] = newLine;
+       return block;
+   }*/
+    
+   for (unsigned int i = 0; i < table.size(); i++)
+   {
+        string op1SR = get<1>(table.at(i));
+        string op2SR = get<2>(table.at(i));
+        string op3SR = get<3>(table.at(i));
+
+        Operand op1;
+        Operand op2;
+        Operand op3;
+
+        if(op1SR == "-")
+        {
+            op1 = toOperand(-1);
+            op1.isReg = false;
+        }
+        else if(op1SR[0] == 'r')
+        {
+            op1 = toOperand(stoi(op1SR.substr(1)));
+            op1.isReg = true;
+        }
+        else
+        {
+            op1 = toOperand(stoi(op1SR));
+            op3.isReg = true;
+        }
+
+        if(op2SR == "-")
+        {
+            op2 = toOperand(-1);
+            op2.isReg = false;
+        }
+        else if(op2SR[0] == 'r')
+        {
+            op2 = toOperand(stoi(op2SR.substr(1)));
+            op2.isReg = true;
+        }
+        else
+        {
+            op2 = toOperand(stoi(op2SR));
+            op2.isReg = true;
+        }
+
+        if(op3SR == "-")
+        {
+            op3 = toOperand(-1);
+            op3.isReg = false;
+        }
+        else if(op3SR[0] == 'r')
+        {
+            op3 = toOperand(stoi(op3SR.substr(1)));
+            op3.isReg = true;
+        }
+        else
+        {
+            op3 = toOperand(stoi(op3SR));
+            op3.isReg = true;
+        }
+
+        //cout << "op1SR is " << op1SR << " op1 isReg? " << op1.isReg << " op2SR is " << op2SR << " op2 isReg? " << op2.isReg << " op3SR is " << op3SR << " op3 isReg? " << op3.isReg <<endl;
+        //cout << "op1 SR: " << op1.SR << " op1 VR: " << op1.VR << " op1 PR: " << op1.VR << " op1 NU: " << op1.NU << " op1 isReg? " << op1.isReg << "        op2 SR:" << op2.SR << " op2 VR: " << op2.VR << " op2 PR: " << op2.VR << " op2 NU: " << op2.NU << " op2 isReg? " << op2.isReg << "        op3 is " << op3.SR << " op3 VR: " << op3.VR << " op3 PR: " << op3.VR << " op3 NU: " << op3.NU << " op3 isReg? " << op3.isReg << "\n" <<endl;
+        Line newLine = toLine(get<0>(table.at(i)), op1, op2, op3);
+        block[i] = newLine;
+   }
+   return block;
+}
+
+
+void parser(bool kFlag)
+{  
+    if(kFlag == false)
+    {
+        update_tokes();
+        t0();
+        printTable();
+    }
+    else
+    {
+        update_tokes();
+        t0();
+        naiveAllocator(populateBlock(table), true, 3);
+    }
+   
+   
+}
+
 
 void createTableRow()
 {
