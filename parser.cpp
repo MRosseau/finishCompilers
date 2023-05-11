@@ -112,7 +112,7 @@ Line toLine(string opcodeVal, Operand op1Val, Operand op2Val, Operand op3Val) {
     return newOp;
 }
 
-vector<Line> populateBlock(vector<tuple<string, string, string, string>> table)
+vector<Line> &populateBlock(vector<tuple<string, string, string, string>> table)
 {
     vector<Line> block;
     block.resize(table.size());
@@ -206,7 +206,8 @@ void parser(bool kFlag)
     {
         update_tokes();
         t0();
-        naiveAllocator(populateBlock(table), true, 3);
+        vector<Line> updatedTable = populateBlock(table);
+        naiveAllocator(updatedTable, true, 3);
     }
    
    

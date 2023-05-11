@@ -19,7 +19,10 @@ int maxReg = 0;
 int VRName;
 int x;
 
-void naiveAllocator(vector<Line> block, bool kFlag, int kNum) {
+//void naiveAllocator(vector<Line> &block, bool kFlag, int kNum)
+//void naiveAllocator(vector<Line> &block, bool kFlag, int kNum)
+
+void naiveAllocator(vector<Line> &block, bool kFlag, int kNum) {
 
 
 
@@ -60,7 +63,7 @@ void naiveAllocator(vector<Line> block, bool kFlag, int kNum) {
    
 }
 //VR allocation and LU
-void lastUse(vector<Line> block, int maxReg, vector<int> LU) { //take out SRtoVR and maxReg as a Variable
+void lastUse(vector<Line> &block, int maxReg, vector<int> &LU) { //take out SRtoVR and maxReg as a Variable
     VRName = 0;
 
 
@@ -92,17 +95,18 @@ void lastUse(vector<Line> block, int maxReg, vector<int> LU) { //take out SRtoVR
 }
 
 
-void update(Operand op, int index, vector<int> LU) { //take out SRtoVR and VRName as a Variable
+void update(Operand &op, int index, vector<int> &LU) { //take out SRtoVR and VRName as a Variable
     cout << "start update op SR " << op.SR << endl;
-    if(op.SR != -1) { //op.SR to get<0>(op)
+    if(op.isReg) { //op.SR != -1 to op.isReg, if-block extended to cover the whole function
         if(SRtoVR[op.SR] == -1) {
             SRtoVR[op.SR] = VRName++; //op.SR to get<0>(op)
         }
-    }
+    
     op.VR = SRtoVR[op.SR]; //op.VR to get<1>(op) //op.SR to get<0>(op)
 
     op.NU = LU[op.SR]; //op.NU to get<3>(op) //op.SR to get<0>(op)
     LU[op.SR] = index; //op.SR to get<0>(op)
     cout << "finished update on op SR " << op.SR << endl; 
+    }
 }
 
