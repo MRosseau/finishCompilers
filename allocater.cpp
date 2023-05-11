@@ -35,6 +35,8 @@ void naiveAllocator(vector<Line> &block, bool kFlag, int kNum) {
 
     //get maxReg
     for(Line l : block) {
+        cout << "start maxReg" << endl;
+        cout << "line: " << l.opcode << endl;
         if(l.op1.isReg)
         {
             maxReg++;

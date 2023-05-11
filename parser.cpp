@@ -206,7 +206,7 @@ void parser(bool kFlag)
     {
         update_tokes();
         t0();
-        vector<Line> updatedTable = populateBlock(table);
+        vector<Line> &updatedTable = populateBlock(table);
         naiveAllocator(updatedTable, true, 3);
     }
    
