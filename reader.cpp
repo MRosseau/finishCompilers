@@ -80,7 +80,20 @@ int main(int argc, char** argv)
         if(inFile == nullptr) return EXIT_FAILURE;
         //char c; unused variable
         //cout << "Calling scanToken" << endl;
-        scanToken(tFlag, pFlag, kFlag);
+        vector<tuple<string, string, string, string>> tempTable = parser(scanToken(tFlag, pFlag));
+        if (kFlag)
+        {
+                cout << "Calling allocator" << endl;
+                //vector<Line> tempBlock = returnBlock();
+                vector<Line> tempBlock = populateBlock(tempTable);
+                naiveAllocator(tempBlock, kVal);
+        }
+        else{
+                //vector<tuple<string, string, string, string>> tempTable = parser();
+                printTable(tempTable);
+        }
+        //table = parser();
+        //naiveAllocator(table, kVal);
         //cout << "Ending scanToken" << endl;
 
 
@@ -93,9 +106,9 @@ int main(int argc, char** argv)
 void PrintHelp()
 {
         cout << "-h:\tPrints a helpful message\n" <<
-                "-t:\tPrints a list of tokens\n" <<
-                "-h:\tPrints a filled out block\n" <<
-                "-p:\tPrints ILOC code\n";
+                "-t:\tPrints a list of tokens - does nothing rn\n" <<
+                "-p:\tPrints ILOC code - does nothing rn\n" <<
+                "-k <num>:\trequires an int as an argument to define the max amount of physical registers\n"; 
 }
 
 

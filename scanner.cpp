@@ -6,26 +6,11 @@ extern FILE* inFile;
 vector< tuple<Token, string> > tokens; //Vector of tuples containing Token types and their lexemes
 
 
-void scanToken(bool tFlag, bool pFlag, bool kFlag)
+vector< tuple<Token, string> > scanToken(bool tFlag, bool pFlag)
 {
         s0();
-        if(tFlag) 
-        {
-                printToken();
-        }
-        else if(pFlag)
-        {
-                cout << "pFlag is true" << endl;
-                printILOC();
-        }
-        else if(kFlag)
-        {
-                parser(true);
-        }
-        else
-        {
-                parser(false);
-        }
+        vector<tuple<Token, string>> retTokens = tokens;
+        return retTokens;
 }
 
 

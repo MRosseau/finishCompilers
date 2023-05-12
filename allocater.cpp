@@ -16,7 +16,7 @@ int maxVR;
 int maxReg = 0;
 int VRName;
 
-void naiveAllocator(vector<Line> &block, bool kFlag, int kNum) {
+void naiveAllocator(vector<Line> &block, int kNum) {
 
     //get maxReg
     for(Line l : block) {
@@ -38,24 +38,26 @@ void naiveAllocator(vector<Line> &block, bool kFlag, int kNum) {
             regInt.push_back(l.op3.SR);
         }
     }
-    cout << "maxReg: " << maxReg << endl;
-    cout << "regInt.size(): " << regInt.size() << endl;
+    //cout << "maxReg: " << maxReg << endl;
+    //cout << "regInt.size(): " << regInt.size() << endl;
     /*for(unsigned int i = 0; i <= regInt.size(); i++)
     {
         SRtoVR[i] = -1;
     }*/
+    cout << "input block" << endl;
+    printBlock(block);
 
     lastUse(block); // block, maxReg, SRtoVR, LU, maxVR to block, maxReg, LU
 
-    for(int i = 0; i < maxReg; i++) {
-        //cout << "SRtoVR[i]: " << SRtoVR[i] << endl;
-         cout << "SRtoVR[" << i << "]: " << SRtoVR[i] << endl;
-         cout << "LU[" << i << "]: " << LU[i] << endl;
-    }
+    // for(int i = 0; i < maxReg; i++) {
+    //     //cout << "SRtoVR[i]: " << SRtoVR[i] << endl;
+    //      cout << "SRtoVR[" << i << "]: " << SRtoVR[i] << endl;
+    //      cout << "LU[" << i << "]: " << LU[i] << endl;
+    // }
    
-    cout << "done" << endl;
+    cout << "output block" << endl;
     printBlock(block);
-    cout << "done" << endl;
+    cout << "output block info" << endl;
     printBlockinfo(block);
    
 }
@@ -209,12 +211,12 @@ void printBlockinfo(vector<Line> &block) {
         cout << ", op1.NU:" << get<2>(printOp1);
         cout << ", op1.PR:" << get<3>(printOp1); 
 
-        cout << ", op2.SR:" << get<0>(printOp2);
+        cout << "        op2.SR:" << get<0>(printOp2);
         cout << ", op2.VR:" << get<1>(printOp2);
         cout << ", op2.NU:" << get<2>(printOp2);
         cout << ", op2.PR:" << get<3>(printOp2); 
 
-        cout << ", op3.SR:" << get<0>(printOp3);
+        cout << "        op3.SR:" << get<0>(printOp3);
         cout << ", op3.VR:" << get<1>(printOp3);
         cout << ", op3.NU:" << get<2>(printOp3);
         cout << ", op3.PR:" << get<3>(printOp3) <<  endl;

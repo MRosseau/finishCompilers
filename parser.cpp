@@ -27,7 +27,7 @@ void update_tokes()
     
 }
 
-void printTable()
+void printTable(vector< tuple<string, string, string, string> > &table)
 {   
     tableSize = table.size();
     cout << "|" << left << setw(5) << "index" << "|" <<
@@ -112,6 +112,14 @@ Line toLine(string opcodeVal, Operand op1Val, Operand op2Val, Operand op3Val) {
     return newOp;
 }
 
+vector<Line> returnBlock(){
+    vector<Line> retBlock;
+
+    retBlock = populateBlock(table);
+
+    return retBlock;
+}
+
 vector<Line> populateBlock(vector<tuple<string, string, string, string>> &table)
 {
     vector<Line> block;
@@ -194,23 +202,17 @@ vector<Line> populateBlock(vector<tuple<string, string, string, string>> &table)
 }
 
 
-void parser(bool kFlag)
+vector< tuple<string, string, string, string> > parser(vector< tuple<Token, string> > tok)
 {  
-    if(kFlag == false)
-    {
+        tokens = tok;
         update_tokes();
         t0();
-        printTable();
-    }
-    else
-    {
-        update_tokes();
-        t0();
-        vector<Line> updatedTable = populateBlock(table);
-        naiveAllocator(updatedTable, true, 3);
-    }
-   
-   
+        //printTable();
+
+        return table;
+
+        // vector<Line> updatedTable = populateBlock(table); //Moved to reader.cpp
+        // naiveAllocator(updatedTable, true, 3);
 }
 
 

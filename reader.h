@@ -70,7 +70,7 @@ struct Line {
 void PrintHelp();
 void PrintTokens();
 
-void scanToken(bool print, bool pFlag, bool kFlag);
+vector< tuple<Token, string> > scanToken(bool print, bool pFlag);
 void printToken();
 
 void ScanErr(char c);
@@ -101,12 +101,13 @@ void s17 (char i);
 void s18 (); //Scan comments
 
 // parser.cpp
+vector<Line> returnBlock();
 vector<Line> populateBlock(vector<tuple<string, string, string, string>> &table); //added to convert table to block
 void createTableRow();
 void update_tokes();
-void printTable();
+void printTable(vector<tuple<string, string, string, string>> &table);
 void printILOC();
-void parser(bool kFlag);
+vector< tuple<string, string, string, string> > parser(vector< tuple<Token, string> > tok);
 void t0();
 void t1();
 void t2();
@@ -117,7 +118,7 @@ void t5();
 //allocater.cpp
 //typedef tuple<string, int, int, int> operand; //this tracks the sr,vr,pr,and nu of an operand
 //typedef tuple<string,operand,operand,operand> line; //constructs a single line of the block which holds OPCODE, OP1, OP2, and OP3
-void naiveAllocator(vector<Line> &block, bool kFlag, int kNum);
+void naiveAllocator(vector<Line> &block, int kNum);
 void lastUse(vector<Line> &block);
 void update(Operand &op, int index);
 void convertPR(Operand &op, vector<int> &VRtoPR, stack<int> &PRList, vector<Line> &temp, int index);
