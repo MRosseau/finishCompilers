@@ -44,10 +44,10 @@ void naiveAllocator(vector<Line> &block, int kNum) {
     {
         SRtoVR[i] = -1;
     }*/
-    cout << "input block" << endl;
+    //cout << "// input block" << endl;
     //printBlock(block);
-    vector< tuple<string, string, string, string> > inputTable = blockToTable(block);
-    printILOCAllo(inputTable);
+    //vector< tuple<string, string, string, string> > inputTable = blockToTable(block);
+    //printILOCAllo(inputTable);
 
     lastUse(block); // block, maxReg, SRtoVR, LU, maxVR to block, maxReg, LU
 
@@ -57,11 +57,11 @@ void naiveAllocator(vector<Line> &block, int kNum) {
     //      cout << "LU[" << i << "]: " << LU[i] << endl;
     // }
    
-    cout << "output block" << endl;
+    cout << "// output block" << endl;
     //printBlock(block);
     vector< tuple<string, string, string, string> > outputTable = blockToTable(block);
     printILOCAllo(outputTable);
-    cout << "output block info" << endl;
+    cout << "// output block info" << endl;
     printBlockinfo(block);
    
 }
@@ -207,7 +207,7 @@ void printBlockinfo(vector<Line> &block) {
         tuple<string, string, string, string> printOp1 = printableOp(l.op1);
         tuple<string, string, string, string> printOp2 = printableOp(l.op2);
         tuple<string, string, string, string> printOp3 = printableOp(l.op3);
-        cout << "index: " << to_string(bSize);
+        cout << "// index: " << to_string(bSize);
         cout << ", opcode: " << l.opcode; 
 
         cout << ", op1.SR:" << get<0>(printOp1);
@@ -244,7 +244,7 @@ void printILOCAllo(vector< tuple<string, string, string, string> > &table)
     //update_tokes();
     //t0();
     int tableSize = table.size();
-    cout << "Table size is " << tableSize << endl;
+    cout << "// Table size is " << tableSize << endl;
     for(int i = 0; i < tableSize; i++)
     {
         //cout << "Iteration " << i << endl;
