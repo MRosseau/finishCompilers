@@ -44,10 +44,10 @@ void naiveAllocator(vector<Line> &block, int kNum) {
     {
         SRtoVR[i] = -1;
     }*/
-    cout << "// input block" << endl;
+    //cout << "// input block" << endl;
     //printBlock(block);
-    vector< tuple<string, string, string, string> > inputTable = blockToTable(block);
-    printILOCAllo(inputTable);
+    //vector< tuple<string, string, string, string> > inputTable = blockToTable(block);
+    //printILOCAllo(inputTable);
 
     lastUse(block); // block, maxReg, SRtoVR, LU, maxVR to block, maxReg, LU
 
