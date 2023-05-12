@@ -11,6 +11,8 @@ int main(int argc, char** argv)
         bool tFlag = false;
         bool pFlag = false;
         bool kFlag = false;
+
+        int kVal = 3;
         const struct option longopts[] =
         {
                 {"help", no_argument, 0, 'h'},
@@ -46,6 +48,23 @@ int main(int argc, char** argv)
                         case 'k':
                                 cout << "printing allocator" << endl;
                                 kFlag = true;
+                                if(optarg != NULL)
+                                {
+                                        if(sscanf(optarg, "%d", &kVal) != 1)
+                                        {
+                                                cerr << "Invalid argument for -k, type -h for help\n";
+                                                exit(-1);
+                                        }
+                                        else if(kVal < 0)
+                                        {
+                                                cerr << "Invalid argument for -k, type -h for help\n";
+                                                exit(-1);
+                                        }
+                                        else
+                                        {
+                                                cout << "kVal = " << kVal << endl;
+                                        }
+                                }
                                 break;
                         case '?':
                                 cerr << "Invalid flag, type -h for help\n";
@@ -61,7 +80,21 @@ int main(int argc, char** argv)
         if(inFile == nullptr) return EXIT_FAILURE;
         //char c; unused variable
         //cout << "Calling scanToken" << endl;
-        scanToken(tFlag, pFlag, kFlag);
+        vector<tuple<string, string, string, string>> tempTable = parser(scanToken(tFlag, pFlag));
+        if (kFlag)
+        {
+                cout << "Calling allocator" << endl;
+                //vector<Line> tempBlock = returnBlock();
+                vector<Line> tempBlock = populateBlock(tempTable);
+                naiveAllocator(tempBlock, kVal);
+        }
+        else{
+                //vector<tuple<string, string, string, string>> tempTable = parser();
+                printTable(tempTable);
+                //printILOC(tempTable);
+        }
+        //table = parser();
+        //naiveAllocator(table, kVal);
         //cout << "Ending scanToken" << endl;
 
 
@@ -74,9 +107,9 @@ int main(int argc, char** argv)
 void PrintHelp()
 {
         cout << "-h:\tPrints a helpful message\n" <<
-                "-t:\tPrints a list of tokens\n" <<
-                "-h:\tPrints a filled out block\n" <<
-                "-p:\tPrints ILOC code\n";
+                "-t:\tPrints a list of tokens - does nothing rn\n" <<
+                "-p:\tPrints ILOC code - does nothing rn\n" <<
+                "-k <num>:\trequires an int as an argument to define the max amount of physical registers\n"; 
 }
 
 

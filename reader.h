@@ -48,15 +48,15 @@ enum Operation {
 };
 
 struct Operand {
-    int SR = -1;
-    int VR = -1;
-    int NU = -1;
-    int PR = -1;
-    bool isReg = false;
+    int SR;
+    int VR;
+    int NU;
+    int PR;
+    bool isReg;
 };
 
 struct Line {
-    int index;
+    int index;    
     string opcode;
     Operand op1;
     Operand op2;
@@ -70,7 +70,7 @@ struct Line {
 void PrintHelp();
 void PrintTokens();
 
-void scanToken(bool print, bool pFlag, bool kFlag);
+vector< tuple<Token, string> > scanToken(bool print, bool pFlag);
 void printToken();
 
 void ScanErr(char c);
@@ -101,12 +101,13 @@ void s17 (char i);
 void s18 (); //Scan comments
 
 // parser.cpp
-vector<Line> populateBlock(vector<tuple<string, string, string, string>> table); //added to convert table to block
+vector<Line> returnBlock();
+vector<Line> populateBlock(vector<tuple<string, string, string, string>> &table); //added to convert table to block
 void createTableRow();
 void update_tokes();
-void printTable();
-void printILOC();
-void parser(bool kFlag);
+void printTable(vector<tuple<string, string, string, string>> &table);
+void printILOC(vector< tuple<string, string, string, string> > table);
+vector< tuple<string, string, string, string> > parser(vector< tuple<Token, string> > tok);
 void t0();
 void t1();
 void t2();
@@ -117,9 +118,15 @@ void t5();
 //allocater.cpp
 //typedef tuple<string, int, int, int> operand; //this tracks the sr,vr,pr,and nu of an operand
 //typedef tuple<string,operand,operand,operand> line; //constructs a single line of the block which holds OPCODE, OP1, OP2, and OP3
-void naiveAllocator(vector<Line> block, bool kFlag, int kNum);
-void lastUse(vector<Line> block, int maxReg, vector<int> SRtoVR, vector<int> LU, int maxVR);
-void update(Operand op, int index, vector<int> SRtoVR, vector<int> LU, int VRName);
-void convertPR(Operand op, vector<int> VRtoPR, stack<int> PRList, vector<Line> temp, int index);
-void updateLiveRange(vector<Line> block, vector<int> LRStart, vector<bool> checkVR, int currentVR, int i);
+void naiveAllocator(vector<Line> &block, int kNum);
+void lastUse(vector<Line> &block);
+void update(Operand &op, int index);
+void convertPR(Operand &op, vector<int> &VRtoPR, stack<int> &PRList, vector<Line> &temp, int index);
+void updateLiveRange(vector<Line> &block, vector<int> &LRStart, vector<bool> &checkVR, int currentVR, int i);
+void printBlock(vector<Line> &block);
+string printOperandSR(Operand &op);
+void printBlockinfo(vector<Line> &block);
+vector<tuple<string, string, string, string>> blockToTable(vector<Line> &block);
+void printILOCAllo(vector< tuple<string, string, string, string> > &table);
+
 

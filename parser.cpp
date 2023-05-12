@@ -27,7 +27,7 @@ void update_tokes()
     
 }
 
-void printTable()
+void printTable(vector< tuple<string, string, string, string> > &table)
 {   
     tableSize = table.size();
     cout << "|" << left << setw(5) << "index" << "|" <<
@@ -51,7 +51,7 @@ void printTable()
         }
 }
 
-void printILOC()
+void printILOC(vector< tuple<string, string, string, string> > table)
 {
     update_tokes();
     t0();
@@ -112,7 +112,15 @@ Line toLine(string opcodeVal, Operand op1Val, Operand op2Val, Operand op3Val) {
     return newOp;
 }
 
-vector<Line> populateBlock(vector<tuple<string, string, string, string>> table)
+vector<Line> returnBlock(){
+    vector<Line> retBlock;
+
+    retBlock = populateBlock(table);
+
+    return retBlock;
+}
+
+vector<Line> populateBlock(vector<tuple<string, string, string, string>> &table)
 {
     vector<Line> block;
     block.resize(table.size());
@@ -150,7 +158,7 @@ vector<Line> populateBlock(vector<tuple<string, string, string, string>> table)
         else
         {
             op1 = toOperand(stoi(op1SR));
-            op3.isReg = true;
+            op1.isReg = false;
         }
 
         if(op2SR == "-")
@@ -166,7 +174,7 @@ vector<Line> populateBlock(vector<tuple<string, string, string, string>> table)
         else
         {
             op2 = toOperand(stoi(op2SR));
-            op2.isReg = true;
+            op2.isReg = false;
         }
 
         if(op3SR == "-")
@@ -182,7 +190,7 @@ vector<Line> populateBlock(vector<tuple<string, string, string, string>> table)
         else
         {
             op3 = toOperand(stoi(op3SR));
-            op3.isReg = true;
+            op3.isReg = false;
         }
 
         //cout << "op1SR is " << op1SR << " op1 isReg? " << op1.isReg << " op2SR is " << op2SR << " op2 isReg? " << op2.isReg << " op3SR is " << op3SR << " op3 isReg? " << op3.isReg <<endl;
@@ -194,22 +202,17 @@ vector<Line> populateBlock(vector<tuple<string, string, string, string>> table)
 }
 
 
-void parser(bool kFlag)
+vector< tuple<string, string, string, string> > parser(vector< tuple<Token, string> > tok)
 {  
-    if(kFlag == false)
-    {
+        tokens = tok;
         update_tokes();
         t0();
-        printTable();
-    }
-    else
-    {
-        update_tokes();
-        t0();
-        naiveAllocator(populateBlock(table), true, 3);
-    }
-   
-   
+        //printTable();
+
+        return table;
+
+        // vector<Line> updatedTable = populateBlock(table); //Moved to reader.cpp
+        // naiveAllocator(updatedTable, true, 3);
 }
 
 
