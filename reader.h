@@ -118,8 +118,8 @@ void t5();
 //typedef tuple<string, int, int, int> operand; //this tracks the sr,vr,pr,and nu of an operand
 //typedef tuple<string,operand,operand,operand> line; //constructs a single line of the block which holds OPCODE, OP1, OP2, and OP3
 void naiveAllocator(vector<Line> &block, bool kFlag, int kNum);
-void lastUse(vector<Line> &block, int maxReg, vector<int> &LU);
-void update(Operand &op, int index, vector<int> &LU);
+void lastUse(vector<Line> &block);
+void update(Operand &op, int index);
 void convertPR(Operand &op, vector<int> &VRtoPR, stack<int> &PRList, vector<Line> &temp, int index);
 void updateLiveRange(vector<Line> &block, vector<int> &LRStart, vector<bool> &checkVR, int currentVR, int i);
 

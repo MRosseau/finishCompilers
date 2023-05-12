@@ -150,7 +150,7 @@ vector<Line> populateBlock(vector<tuple<string, string, string, string>> &table)
         else
         {
             op1 = toOperand(stoi(op1SR));
-            op3.isReg = false;
+            op1.isReg = false;
         }
 
         if(op2SR == "-")
