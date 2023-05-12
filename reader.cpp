@@ -11,6 +11,8 @@ int main(int argc, char** argv)
         bool tFlag = false;
         bool pFlag = false;
         bool kFlag = false;
+
+        int kVal = 3;
         const struct option longopts[] =
         {
                 {"help", no_argument, 0, 'h'},
@@ -46,6 +48,23 @@ int main(int argc, char** argv)
                         case 'k':
                                 cout << "printing allocator" << endl;
                                 kFlag = true;
+                                if(optarg != NULL)
+                                {
+                                        if(sscanf(optarg, "%d", &kVal) != 1)
+                                        {
+                                                cerr << "Invalid argument for -k, type -h for help\n";
+                                                exit(-1);
+                                        }
+                                        else if(kVal < 0)
+                                        {
+                                                cerr << "Invalid argument for -k, type -h for help\n";
+                                                exit(-1);
+                                        }
+                                        else
+                                        {
+                                                cout << "kVal = " << kVal << endl;
+                                        }
+                                }
                                 break;
                         case '?':
                                 cerr << "Invalid flag, type -h for help\n";

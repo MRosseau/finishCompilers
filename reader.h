@@ -56,7 +56,7 @@ struct Operand {
 };
 
 struct Line {
-    int index;
+    int index;    
     string opcode;
     Operand op1;
     Operand op2;
@@ -122,4 +122,8 @@ void lastUse(vector<Line> &block);
 void update(Operand &op, int index);
 void convertPR(Operand &op, vector<int> &VRtoPR, stack<int> &PRList, vector<Line> &temp, int index);
 void updateLiveRange(vector<Line> &block, vector<int> &LRStart, vector<bool> &checkVR, int currentVR, int i);
+void printBlock(vector<Line> &block);
+string printOperandSR(Operand &op);
+void printBlockinfo(vector<Line> &block);
+
 
