@@ -51,7 +51,7 @@ void printTable(vector< tuple<string, string, string, string> > &table)
         }
 }
 
-void printILOC()
+void printILOC(vector< tuple<string, string, string, string> > table)
 {
     update_tokes();
     t0();

@@ -91,6 +91,7 @@ int main(int argc, char** argv)
         else{
                 //vector<tuple<string, string, string, string>> tempTable = parser();
                 printTable(tempTable);
+                //printILOC(tempTable);
         }
         //table = parser();
         //naiveAllocator(table, kVal);

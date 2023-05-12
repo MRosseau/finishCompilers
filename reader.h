@@ -106,7 +106,7 @@ vector<Line> populateBlock(vector<tuple<string, string, string, string>> &table)
 void createTableRow();
 void update_tokes();
 void printTable(vector<tuple<string, string, string, string>> &table);
-void printILOC();
+void printILOC(vector< tuple<string, string, string, string> > table);
 vector< tuple<string, string, string, string> > parser(vector< tuple<Token, string> > tok);
 void t0();
 void t1();
