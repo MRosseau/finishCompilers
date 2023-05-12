@@ -45,7 +45,9 @@ void naiveAllocator(vector<Line> &block, int kNum) {
         SRtoVR[i] = -1;
     }*/
     cout << "input block" << endl;
-    printBlock(block);
+    //printBlock(block);
+    vector< tuple<string, string, string, string> > inputTable = blockToTable(block);
+    printILOCAllo(inputTable);
 
     lastUse(block); // block, maxReg, SRtoVR, LU, maxVR to block, maxReg, LU
 
@@ -56,7 +58,9 @@ void naiveAllocator(vector<Line> &block, int kNum) {
     // }
    
     cout << "output block" << endl;
-    printBlock(block);
+    //printBlock(block);
+    vector< tuple<string, string, string, string> > outputTable = blockToTable(block);
+    printILOCAllo(outputTable);
     cout << "output block info" << endl;
     printBlockinfo(block);
    
@@ -224,7 +228,62 @@ void printBlockinfo(vector<Line> &block) {
     }
 }
 
+vector<tuple<string, string, string, string>> blockToTable(vector<Line> &block){
+    vector<tuple<string, string, string, string>> table; //opcode, op1.sr, op2.sr, op3.sr
+    for(Line l : block) {
+        tuple<string, string, string, string> printOp1 = printableOp(l.op1);
+        tuple<string, string, string, string> printOp2 = printableOp(l.op2);
+        tuple<string, string, string, string> printOp3 = printableOp(l.op3);
+        table.push_back(make_tuple(l.opcode, get<0>(printOp1), get<0>(printOp2), get<0>(printOp3)));
+    }
+    return table;
+}
 
+void printILOCAllo(vector< tuple<string, string, string, string> > &table)
+{
+    //update_tokes();
+    //t0();
+    int tableSize = table.size();
+    cout << "Table size is " << tableSize << endl;
+    for(int i = 0; i < tableSize; i++)
+    {
+        //cout << "Iteration " << i << endl;
+        string opcode = get<0>(table.at(i));
+
+        if(opcode == "load" || opcode == "loadI") //Print load, loadI
+        {
+            cout << left << setw(8) << opcode <<
+                left << setw(14) << get<1>(table.at(i)) <<
+                "=> " << get<3>(table.at(i)) << endl;
+        }
+        else if(opcode == "store") //Print store
+        {
+            cout << left << setw(8) << opcode <<
+                left << setw(14) << get<1>(table.at(i)) <<
+                "=> " << get<2>(table.at(i)) << endl;
+        }
+        else if(opcode == "add" || opcode == "sub" || opcode == "mult" || opcode == "lshift" || opcode == "rshift") //Print add, sub, mult, lshift, rshift
+        {
+            cout << left << setw(8) << opcode <<
+                left << setw(6) << get<1>(table.at(i)) <<
+                left << setw(2) << ", " <<
+                left << setw(6) << get<2>(table.at(i)) <<
+                "=> " << get<3>(table.at(i)) << endl;
+        }
+        else if(opcode == "nop") //Print nop
+        {
+            cout << "nop" << endl;
+        }
+        else if(opcode == "output") //Print output
+        {
+            cout << left << setw(8) << opcode << get<1>(table.at(i)) << endl;
+        }
+        else
+        {
+            cout << "Invalid token" << endl;
+        }
+    }
+}
 
 // void printOperandSR(Operand &op) {
 //     if(op.isReg) {

@@ -126,5 +126,7 @@ void updateLiveRange(vector<Line> &block, vector<int> &LRStart, vector<bool> &ch
 void printBlock(vector<Line> &block);
 string printOperandSR(Operand &op);
 void printBlockinfo(vector<Line> &block);
+vector<tuple<string, string, string, string>> blockToTable(vector<Line> &block);
+void printILOCAllo(vector< tuple<string, string, string, string> > &table);
 
 
