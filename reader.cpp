@@ -106,6 +106,8 @@ int main(int argc, char** argv)
 //FLAG FUNCTIONS
 void PrintHelp()
 {
+        cout << "Usage: ./reader <filepath> [options]\n" <<
+                "Options:\n";
         cout << "-h:\tPrints a helpful message\n" <<
                 "-t:\tPrints a list of tokens - does nothing rn\n" <<
                 "-p:\tPrints ILOC code - does nothing rn\n" <<
